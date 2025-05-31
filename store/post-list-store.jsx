@@ -1,9 +1,10 @@
-import { createContext, useReducer } from "react";
+import { createContext, useReducer,useEffect,useState } from "react";
 
 export const PostList = createContext({
   postList: [],
   // addPost:()=>{},
   // deletePost: ()=>{}
+    load: false
 })
 const postListReducer = (state, action) => {
   switch (action.type) {
@@ -46,8 +47,41 @@ const PostListProvider = ({children})=>{
   //     }
   //   })
   // }
+  const [load, setLoad] = useState(false);
+  console.log("postList from context", postList)
+  
+  useEffect(() => {
+      if(postList.length>0){
+      return
+    }
+   setLoad(true)
+   const controller = new AbortController();
+   const signal = controller.signal
+   fetch('https://dummyjson.com/posts' ,{signal})
+  .then(res => res.json())
+  
+  .then((data)=>{
+    console.log("API Response", data)
+    console.log(data.posts)
+      dispatch(
+    {
+      type:"add_initial",
+      payload :{
+      posts: data.posts
+      }
+    }
+  )
+  setLoad(false)
+  } )
+  
+    return () => {
+    console.log("cleanup")
+    controller.abort();
+    }
+  }, [])
+  
   return  (
-   < PostList.Provider value={{postList, dispatch
+   < PostList.Provider value={{postList, dispatch, load
    
   //  addPost,
    }}>
@@ -88,3 +122,20 @@ const PostListProvider = ({children})=>{
 
 // }, ]
 export default PostListProvider;
+
+
+// PostListProvider app ke top-level me lagta hai (usually App.jsx ya layout ke andar):
+
+// jsx
+// Copy code
+// <PostListProvider>
+//   <App />
+// </PostListProvider>
+// ✅ Ye component sirf ek baar mount hota hai (poore app ke lifecycle me).
+
+// Concept	createContext() Only	createContext() + Wrapper
+// Banata kya hai?	Context + Provider	Ek custom React component with Provider
+// Provider ka logic kahan likha?	Har jagah manual	Ek jagah centralize karke wrapper mein
+// Kya baar-baar likhna padta?	Haan, Provider har jagah likhna padta	Nahi, sirf wrapper use karte ho
+// Reuse karna easy?	❌ Nahi	✅ Haan
+// Large app ke liye better?	❌ Messy ho jaata hai	✅ Clean aur maintainable

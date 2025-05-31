@@ -2,8 +2,10 @@ import React from 'react'
 import { useContext } from 'react'
 import { useRef } from 'react'
 import {PostList }from '../store/post-list-store'
+import { useNavigate } from 'react-router-dom'
 export default function CreatePost() {
   const {addPost,dispatch} = useContext(PostList)
+  const navigate = useNavigate()
   const userIdElement = useRef()
   const  postTitleElement= useRef()
   const postbodyElement = useRef()
@@ -31,7 +33,7 @@ export default function CreatePost() {
   
           body,
            userId,
-           reactions,
+           reactions : { likes: Number(reactions) },
           tags
       }
     }
@@ -41,6 +43,7 @@ postTitleElement.current.value = '';
 postbodyElement.current.value = '';
 tagsElement.current.value = '';
 reactionElement.current.value='';
+navigate('/');
   }
   return (
     <div>

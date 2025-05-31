@@ -1,12 +1,25 @@
+import ReactDOM from 'react-dom/client'
+import React from 'react'
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
+// import { createRoot } from 'react-dom/client'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import PostList from '../components/PostList.jsx'
+
 import App from './App.jsx'
-import PostListProvider from '../store/post-list-store.jsx'
-createRoot(document.getElementById('root')).render(
+
+import CreatePost from '../components/CreatePost.jsx'
+const router = createBrowserRouter([
+  {path:"/",
+     element: <App />,
+     children:[
+     {path:"/", element: <PostList/>},
+    {path:"/create-post" , element:<CreatePost/> }]
+     }
+])
+ReactDOM.createRoot(document.getElementById('root')).render(
   <StrictMode>
-     <PostListProvider>
-    <App />
-    </PostListProvider>
+   <RouterProvider router={router}/>
+   
+   
   </StrictMode>,
 )

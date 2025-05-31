@@ -7,28 +7,32 @@ import CreatePost from '../components/CreatePost'
 import PostList from '../components/PostList'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import PostListProvider from '../store/post-list-store'
+import { Outlet } from 'react-router-dom'
 
 function App() {
-  
-const [activepage, setActivepage] = useState("Home")
+   
+// const [activepage, setActivepage] = useState("Home")
   return (
-
-    <>
+ <PostListProvider>
+    
 
     <div className='main'>
-    <Sliderbar setActivepage={setActivepage}
-    activepage={activepage}></Sliderbar>
+    <Sliderbar></Sliderbar>
 <div className='main2'>
     <Header></Header>
   
- { activepage==="Home"?<PostList ></PostList> :<CreatePost></CreatePost>}
-
+ {/* { activepage==="Home"?<PostList ></PostList> :<CreatePost></CreatePost>} */}
+   <Outlet></Outlet>
     <Footer></Footer>
     </div>
     </div>
-    </>
+      </PostListProvider>
+    
+   
   )
 }
+   
 
 export default App
 
